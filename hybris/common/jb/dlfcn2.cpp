@@ -32,28 +32,14 @@
 #define DL_ERR_SYMBOL_NOT_FOUND       4
 #define DL_ERR_SYMBOL_NOT_GLOBAL      5
 
-static char dl_err_buf[1024];
-static const char *dl_err_str;
-
-static const char *dl_errors[] = {
-    [DL_ERR_CANNOT_LOAD_LIBRARY] = "Cannot load library",
-    [DL_ERR_INVALID_LIBRARY_HANDLE] = "Invalid library handle",
-    [DL_ERR_BAD_SYMBOL_NAME] = "Invalid symbol name",
-    [DL_ERR_SYMBOL_NOT_FOUND] = "Symbol not found",
-    [DL_ERR_SYMBOL_NOT_GLOBAL] = "Symbol is not global",
-};
+extern const char *dl_err_str;
 
 #define likely(expr)   __builtin_expect (expr, 1)
 #define unlikely(expr) __builtin_expect (expr, 0)
 
 static pthread_mutex_t dl_lock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
-static void set_dlerror(int err)
-{
-    format_buffer(dl_err_buf, sizeof(dl_err_buf), "%s: %s", dl_errors[err],
-             linker_get_error());
-    dl_err_str = (const char *)&dl_err_buf[0];
-};
+void set_dlerror(int err);
 
 void *android_dlopen(const char *filename, int flag)
 {
@@ -267,16 +253,16 @@ static unsigned libdl_chains[7] = { 0, 2, 3, 4, 5, 6, 0 };
 #endif
 
 soinfo libdl_info = {
-    name: "libdl.so",
+    { name: "libdl.so" },
     flags: FLAG_LINKED,
 
     strtab: ANDROID_LIBDL_STRTAB,
     symtab: libdl_symtab,
 
-    refcount: 1,
     nbucket: sizeof(libdl_buckets)/sizeof(unsigned),
     nchain: sizeof(libdl_chains)/sizeof(unsigned),
     bucket: libdl_buckets,
     chain: libdl_chains,
+    refcount: 1,
 };
     
