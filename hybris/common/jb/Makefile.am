@@ -9,7 +9,8 @@ endif
 modlibexecdir = $(libdir)/libhybris/linker
 modlibexec_LTLIBRARIES = jb.la
 jb_la_SOURCES = \
-	dlfcn.c \
+	dlfcn1.c \
+	dlfcn2.cpp \
 	linker.c \
 	linker_environ.c \
 	linker_format.c \
@@ -21,6 +22,12 @@ jb_la_CFLAGS = \
 	-I$(top_srcdir)/common \
 	-DDEFAULT_HYBRIS_LD_LIBRARY_PATH="\"@DEFAULT_HYBRIS_LD_LIBRARY_PATH@\"" \
 	$(ARCHFLAGS)
+jb_la_CXXFLAGS = \
+        -I$(top_srcdir)/include \
+        $(ANDROID_HEADERS_CFLAGS) \
+        -I$(top_srcdir)/common \
+        -DDEFAULT_HYBRIS_LD_LIBRARY_PATH="\"@DEFAULT_HYBRIS_LD_LIBRARY_PATH@\"" \
+        $(ARCHFLAGS) -fpermissive
 jb_la_LDFLAGS = \
 	-module \
 	-avoid-version
